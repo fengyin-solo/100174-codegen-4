@@ -13,6 +13,7 @@ class PageResult(BaseModel, Generic[T]):
     total: int
     page: int = 1
     size: int = 20
+    summary: dict[str, Any] | None = None
 
 
 class ActionResult(BaseModel):
@@ -244,3 +245,15 @@ class SettleEntry(BaseModel):
     field_5: str | None = None  # 审核人员
     field_6: str | None = None  # 付款日期
     field_7: str | None = None  # 结算状态
+
+class InsuranceEntry(BaseModel):
+    """保险保单明细结构。"""
+
+    field_0: str | None = None  # 保单号
+    field_1: str | None = None  # 承保单位
+    field_2: str | None = None  # 保额
+    field_3: str | None = None  # 险种
+    field_4: str | None = None  # 保险期间
+    field_5: str | None = None  # 理赔次数
+    field_6: str | None = None  # 结案状态
+    field_7: str | None = None  # 保单状态

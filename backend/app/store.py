@@ -10,13 +10,18 @@ from app.seed import SEED_ROWS
 
 
 class Store:
+    # 子表不单独作为业务模块出现在概览与模块计数里，例如理赔申请从属于保单。
+    SUB_TABLES = {"insurance_claim"}
+
     def __init__(self) -> None:
         self._tables: dict[str, list[dict[str, Any]]] = {
             name: [dict(row) for row in rows] for name, rows in SEED_ROWS.items()
         }
+        # 打包导出的文件包：按批次号存放，同一批重复导出直接覆盖旧包。
+        self._packages: dict[str, dict[str, Any]] = {}
 
     def module_names(self) -> list[str]:
-        return sorted(self._tables)
+        return sorted(name for name in self._tables if name not in self.SUB_TABLES)
 
     def rows(self, module: str) -> list[dict[str, Any]]:
         return self._tables.setdefault(module, [])
@@ -27,14 +32,30 @@ class Store:
                 return row
         return None
 
+    def save_package(self, batch_no: str, package: dict[str, Any]) -> None:
+        """保存一个打包文件包；批次号相同时覆盖旧包，而不是追加副本。"""
+        self._packages[batch_no] = package
+
+    def list_packages(self) -> list[dict[str, Any]]:
+        return list(self._packages.values())
+
+    def get_package(self, batch_no: str) -> dict[str, Any] | None:
+        return self._packages.get(batch_no)
+
     def overview(self) -> dict[str, object]:
         modules: list[dict[str, object]] = []
         for name in self.module_names():
             rows = self.rows(name)
+            if name == "insurance":
+                # 在途理赔数：以理赔子表里尚未结案的申请单为准，而不是只数保单。
+                claim_rows = self.rows("insurance_claim")
+                pending = sum(1 for row in claim_rows if row.get("in_transit"))
+            else:
+                pending = sum(1 for row in rows if row.get("pending"))
             modules.append({
                 "name": name,
                 "created": len(rows),
-                "pending": sum(1 for row in rows if row.get("pending")),
+                "pending": pending,
                 "abnormal": sum(1 for row in rows if row.get("abnormal")),
             })
         cards = [
