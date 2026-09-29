@@ -19,6 +19,10 @@ const Operator = () => import('@/views/operator/index.vue')
 const Spare = () => import('@/views/spare/index.vue')
 const Contract = () => import('@/views/contract/index.vue')
 const Settle = () => import('@/views/settle/index.vue')
+const Insurance = () => import('@/views/insurance/index.vue')
+const InsuranceDetail = () => import('@/views/insurance/detail.vue')
+const Claim = () => import('@/views/claim/index.vue')
+const ClaimDetail = () => import('@/views/claim/detail.vue')
 
 const router = createRouter({
   history: createWebHistory(),
@@ -42,6 +46,10 @@ const router = createRouter({
     { path: '/spare', name: 'spare', component: Spare },
     { path: '/contract', name: 'contract', component: Contract },
     { path: '/settle', name: 'settle', component: Settle },
+    { path: '/insurance', name: 'insurance', component: Insurance },
+    { path: '/insurance/:id', name: 'insurance-detail', component: InsuranceDetail },
+    { path: '/claim', name: 'claim', component: Claim },
+    { path: '/claim/:id', name: 'claim-detail', component: ClaimDetail },
   ],
 })
 

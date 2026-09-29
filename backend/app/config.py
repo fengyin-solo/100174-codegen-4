@@ -1,7 +1,9 @@
 """运行配置：端口、跨域、运行环境。"""
 from __future__ import annotations
 
+import os
 from dataclasses import dataclass, field
+from pathlib import Path
 
 
 @dataclass(frozen=True)
@@ -17,6 +19,12 @@ class Settings:
     )
     page_size_default: int = 20
     page_size_max: int = 200
+    # 理赔材料包导出目录：同条件重复导出时在这个目录里覆盖旧包，而不是追加。
+    export_dir: Path = field(
+        default_factory=lambda: Path(
+            os.environ.get("CLAIM_EXPORT_DIR", "/tmp/special-equipment-exports")
+        )
+    )
 
 
 settings = Settings()

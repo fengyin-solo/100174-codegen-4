@@ -21,6 +21,20 @@ class ActionResult(BaseModel):
     entry: dict[str, Any] | None = None
 
 
+class ExportPackageResult(BaseModel):
+    """理赔材料包导出结果：条数与合计必须和列表当前过滤范围一致。"""
+
+    ok: bool
+    message: str
+    batch_id: str | None = None
+    filename: str | None = None
+    total: int = 0
+    total_amount: float = 0
+    conditions: dict[str, Any] = Field(default_factory=dict)
+    exported_at: str | None = None
+    overwritten: bool = False
+
+
 class EntryPayload(BaseModel):
     """登记或修改一条业务记录时提交的字段集合。"""
 
@@ -244,3 +258,27 @@ class SettleEntry(BaseModel):
     field_5: str | None = None  # 审核人员
     field_6: str | None = None  # 付款日期
     field_7: str | None = None  # 结算状态
+
+class InsuranceEntry(BaseModel):
+    """保险保单明细结构。"""
+
+    field_0: str | None = None  # 保单号
+    field_1: str | None = None  # 承保单位
+    field_2: str | None = None  # 投保设备
+    field_3: str | None = None  # 保额
+    field_4: str | None = None  # 保费
+    field_5: str | None = None  # 保险期限起
+    field_6: str | None = None  # 保险期限止
+    field_7: str | None = None  # 经办人
+
+class ClaimEntry(BaseModel):
+    """理赔申请明细结构。"""
+
+    field_0: str | None = None  # 理赔单号
+    field_1: str | None = None  # 保单号
+    field_2: str | None = None  # 承保单位
+    field_3: str | None = None  # 事故设备
+    field_4: str | None = None  # 出险日期
+    field_5: str | None = None  # 申请金额
+    field_6: str | None = None  # 事故经过
+    field_7: str | None = None  # 理赔状态
